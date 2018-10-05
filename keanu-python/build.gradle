@@ -1,0 +1,24 @@
+plugins {
+  id "com.linkedin.python-sdist" version "0.8.10"
+}
+
+apply plugin: 'com.linkedin.python-sdist'
+
+dependencies {
+    python "pypi:py4j:0.10.7"
+    python "pypi:numpy:1.15.2"
+    python "pypi:pandas:0.23.4"
+}
+
+repositories {
+    // This repository is provided for example purposes only
+    pyGradlePyPi()
+    ivy {
+        url "file:/Users/michaellewin/repos/enterprise/keanu/keanu-python/pypi-cache/"
+        layout "pattern", {
+            artifact "[module]/[revision]/[artifact]/[artifact]-[revision].[ext]"
+            artifact "[module]/[revision]/[artifact]-[revision].[ext]"
+            artifact "[module]/[revision]/[module]-[revision].[artifact]"
+        }
+    }
+}
