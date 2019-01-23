@@ -3,8 +3,9 @@ from .base import JavaObjectWrapper
 from .context import KeanuContext
 from .vertex.base import Vertex
 from .keanu_random import KeanuRandom
-from typing import Any, Iterator, Iterable
+from typing import Any, Iterator, Iterable, List, Optional
 from .vartypes import vertex_label_types
+from .vertex.label import VertexLabel, _VertexLabel
 
 k = KeanuContext()
 
@@ -36,8 +37,15 @@ class BayesNet(JavaObjectWrapper):
     def probe_for_non_zero_probability(self, attempts: int, random: KeanuRandom) -> None:
         self.unwrap().probeForNonZeroProbability(attempts, random.unwrap())
 
-    def get_vertex_by_label(self, label: vertex_label_types) -> Vertex:
-        return Vertex(self.unwrap().getVertexByLabel(label.unwrap()))
+    def get_vertex_by_label(self, label: vertex_label_types) -> Optional[Vertex]:
+        if isinstance(label, _VertexLabel):
+            val = label.unwrap()
+        elif isinstance(label, str):
+            val = VertexLabel(label).unwrap()
+        else:
+            raise TypeError("label should be str or VertexLabel")
+        java_vertex = self.unwrap().getVertexByLabel(val)
+        return Vertex(java_vertex) if java_vertex else None
 
     def get_vertices_in_namespace(self, namespace: List[str]) -> Iterator[Vertex]:
         return Vertex._to_generator(self.unwrap().getVerticesInNamespace(k.to_java_string_array(namespace)))

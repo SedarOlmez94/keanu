@@ -1,6 +1,7 @@
-from keanu.vertex import UniformInt, Gamma, Poisson, Cauchy
+from keanu.vertex import UniformInt, Gamma, Poisson, Cauchy, Gaussian
 from keanu import BayesNet, KeanuRandom
 from keanu.network_io import ProtobufLoader, JsonLoader, ProtobufSaver, DotSaver, JsonSaver
+from keanu.vertex import VertexLabel
 import pytest
 
 
@@ -104,11 +105,47 @@ def test_can_save_and_load(tmpdir) -> None:
 
 def test_can_get_vertex_by_label() -> None:
     gamma_label = VertexLabel('gamma')
-    gaussian_label = VertexLabel('gaussian')
+    gaussian_label = VertexLabel('gaussian', ["outer", "inner"])
 
     gamma = Gamma(1., 1., label=gamma_label)
     gaussian = Gaussian(0., gamma, label=gaussian_label)
 
     net = BayesNet([gamma, gaussian])
     assert net.get_vertex_by_label(gamma_label) == gamma
-    assert net.get_vertex_by_label(gaussian) == gamma
+    assert net.get_vertex_by_label('gamma') == gamma
+    assert net.get_vertex_by_label(gaussian_label) == gaussian
+
+
+def test_get_vertex_by_label_returns_none_if_not_found() -> None:
+    net = BayesNet([Gaussian(0., 1., label="used label"), Gamma(1., 1.)])
+    assert net.get_vertex_by_label("unused label") == None
+
+
+def test_can_get_vertices_in_namespace() -> None:
+    gamma_label = VertexLabel('gamma', ["outer", "inner"])
+    gaussian_label = VertexLabel('gaussian', ["outer"])
+
+    gamma = Gamma(1., 1., label=gamma_label)
+    gaussian = Gaussian(0., gamma, label=gaussian_label)
+
+    net = BayesNet([gamma, gaussian])
+    vertices_in_outer = list(net.get_vertices_in_namespace(["outer"]))
+    vertices_in_inner = list(net.get_vertices_in_namespace(["outer", "inner"]))
+
+    assert len(vertices_in_outer) == 2
+    assert gamma in vertices_in_outer
+    assert gaussian in vertices_in_outer
+
+    assert len(vertices_in_inner) == 1
+    assert gamma in vertices_in_inner
+
+
+def test_get_vertices_in_namespace_returns_empty_if_not_found() -> None:
+    gamma_label = VertexLabel('gamma', ["outer", "inner"])
+    gaussian_label = VertexLabel('gaussian', ["outer"])
+
+    gamma = Gamma(1., 1., label=gamma_label)
+    gaussian = Gaussian(0., gamma, label=gaussian_label)
+
+    net = BayesNet([gamma, gaussian])
+    assert list(net.get_vertices_in_namespace(["inner", "outer"])) == []
