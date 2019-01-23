@@ -100,3 +100,15 @@ def test_can_save_and_load(tmpdir) -> None:
     check_loaded_net(new_net_from_proto)
     new_net_from_json = json_loader.load(JSON_FILE)
     check_loaded_net(new_net_from_json)
+
+
+def test_can_get_vertex_by_label() -> None:
+    gamma_label = VertexLabel('gamma')
+    gaussian_label = VertexLabel('gaussian')
+
+    gamma = Gamma(1., 1., label=gamma_label)
+    gaussian = Gaussian(0., gamma, label=gaussian_label)
+
+    net = BayesNet([gamma, gaussian])
+    assert net.get_vertex_by_label(gamma_label) == gamma
+    assert net.get_vertex_by_label(gaussian) == gamma

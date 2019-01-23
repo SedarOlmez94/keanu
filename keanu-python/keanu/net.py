@@ -4,6 +4,7 @@ from .context import KeanuContext
 from .vertex.base import Vertex
 from .keanu_random import KeanuRandom
 from typing import Any, Iterator, Iterable
+from .vartypes import vertex_label_types
 
 k = KeanuContext()
 
@@ -34,3 +35,9 @@ class BayesNet(JavaObjectWrapper):
 
     def probe_for_non_zero_probability(self, attempts: int, random: KeanuRandom) -> None:
         self.unwrap().probeForNonZeroProbability(attempts, random.unwrap())
+
+    def get_vertex_by_label(self, label: vertex_label_types) -> Vertex:
+        return Vertex(self.unwrap().getVertexByLabel(label.unwrap()))
+
+    def get_vertices_in_namespace(self, namespace: List[str]) -> Iterator[Vertex]:
+        return Vertex._to_generator(self.unwrap().getVerticesInNamespace(k.to_java_string_array(namespace)))
