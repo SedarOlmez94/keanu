@@ -15,14 +15,14 @@ class _VertexLabel(JavaObjectWrapper):
 
     def __eq__(self, other) -> bool:
         if isinstance(other, str):
-            return self.get_qualified_name() == other
+            return other == self.get_unqualified_name()
         elif isinstance(other, _VertexLabel):
             return self.unwrap().equals(other.unwrap())
         else:
             return False
 
     def __hash__(self) -> int:
-        return hash(self.get_qualified_name())
+        return self.unwrap().hashCode()
 
     def __repr__(self) -> str:
         return self.get_qualified_name()

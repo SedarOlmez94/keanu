@@ -17,12 +17,18 @@ def test_inequality(label1: VertexLabel) -> None:
     assert label1 != label2
 
 
-def test_equality_str(label1: VertexLabel) -> None:
-    assert label1 == "outer.inner.label1"
+def test_equality_str_with_no_namespace(label1: VertexLabel) -> None:
+    label_with_no_namespace = VertexLabel("nonamespace")
+    assert label_with_no_namespace == "nonamespace"
 
 
-def test_inequality_str(label1: VertexLabel) -> None:
-    assert label1 != "label2"
+def test_inequality_str_with_no_namespace(label1: VertexLabel) -> None:
+    label_with_no_namespace = VertexLabel("nonamespace")
+    assert label_with_no_namespace != "withnamespace"
+
+
+def test_inequality_str_with_namespace_separator(label1: VertexLabel) -> None:
+    assert label1 != "outer.inner.label1"
 
 
 def test_is_in_namespace(label1: VertexLabel) -> None:
@@ -58,3 +64,14 @@ def test_unqualified_name(label1: VertexLabel) -> None:
 
 def test_qualified_name(label1: VertexLabel) -> None:
     assert label1.get_qualified_name() == "outer.inner.label1"
+
+
+def test_dict_distinguishes_label_namespaced_and_str_with_just_namespace_separator(label1: VertexLabel) -> None:
+    similar_to_label1 = VertexLabel(label1.get_qualified_name())
+    d = {}
+    d[similar_to_label1] = 2
+    d[label1] = 1
+
+    assert len(d) == 2
+    assert d[similar_to_label1] == 2
+    assert d[label1] == 1
