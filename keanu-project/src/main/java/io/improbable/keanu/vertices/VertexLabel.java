@@ -22,14 +22,16 @@ public class VertexLabel {
         this.namespace = ImmutableList.copyOf(namespace);
     }
 
-    public boolean isInNamespace(String... namespace) {
+    public boolean isInNamespace(String... proposedNamespace) {
 
-        if (namespace.length > this.namespace.size()) {
+        if (proposedNamespace.length > namespace.size()) {
             return false;
         }
 
-        for (int i = 0; i < namespace.length; i++) {
-            if (!this.namespace.get(i).equals(namespace[i])) {
+        int proposedNamespaceLastIndex = proposedNamespace.length - 1;
+        int namespaceLastIndex = namespace.size() - 1;
+        for (int i = 0; i < proposedNamespace.length; i++) {
+            if (!namespace.get(namespaceLastIndex - i).equals(proposedNamespace[proposedNamespaceLastIndex - i])) {
                 return false;
             }
         }

@@ -145,31 +145,25 @@ public class VertexLabelTest {
 
     @Test
     public void isInNamespaceOfEqualValue() {
-        VertexLabel label = new VertexLabel("foo", "root", "outer", "inner");
-        assertTrue(label.isInNamespace("root", "outer", "inner"));
+        VertexLabel label = new VertexLabel("foo", "root", "inner", "outer");
+        assertTrue(label.isInNamespace("root", "inner", "outer"));
     }
 
     @Test
     public void isInSuperNamespace() {
-        VertexLabel label = new VertexLabel("foo", "root", "outer", "inner");
-        assertTrue(label.isInNamespace("root", "outer"));
-    }
-
-    @Test
-    public void isNotInNamespaceWithMorePrefix() {
-        VertexLabel label = new VertexLabel("foo", "outer", "inner");
-        assertFalse(label.isInNamespace("root", "outer", "inner"));
-    }
-
-    @Test
-    public void isNotInNamespaceWithMissingPrefix() {
-        VertexLabel label = new VertexLabel("foo", "root", "outer", "inner");
-        assertFalse(label.isInNamespace("outer", "inner"));
+        VertexLabel label = new VertexLabel("foo","inner", "outer", "mostOuter");
+        assertTrue(label.isInNamespace("outer", "mostOuter"));
     }
 
     @Test
     public void isNotInSubNamespace() {
-        VertexLabel label = new VertexLabel("foo", "root", "outer");
-        assertFalse(label.isInNamespace("root", "outer", "inner"));
+        VertexLabel label = new VertexLabel("foo", "inner", "outer");
+        assertFalse(label.isInNamespace("mostInner", "inner", "outer"));
+    }
+
+    @Test
+    public void isNotInNamespaceWithDifferentOuter() {
+        VertexLabel label = new VertexLabel("foo", "inner", "outer");
+        assertFalse(label.isInNamespace("inner", "differentOuter"));
     }
 }

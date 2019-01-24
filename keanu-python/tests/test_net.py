@@ -105,7 +105,7 @@ def test_can_save_and_load(tmpdir) -> None:
 
 def test_can_get_vertex_by_label() -> None:
     gamma_label = VertexLabel('gamma')
-    gaussian_label = VertexLabel('gaussian', ["outer", "inner"])
+    gaussian_label = VertexLabel('gaussian', ["inner", "outer"])
 
     gamma = Gamma(1., 1., label=gamma_label)
     gaussian = Gaussian(0., gamma, label=gaussian_label)
@@ -119,10 +119,11 @@ def test_can_get_vertex_by_label() -> None:
 def test_get_vertex_by_label_returns_none_if_not_found() -> None:
     net = BayesNet([Gaussian(0., 1., label="used label"), Gamma(1., 1.)])
     assert net.get_vertex_by_label("unused label") == None
+    assert net.get_vertex_by_label(VertexLabel("used label", ["inner", "outer"])) == None
 
 
 def test_can_get_vertices_in_namespace() -> None:
-    gamma_label = VertexLabel('gamma', ["outer", "inner"])
+    gamma_label = VertexLabel('gamma', ["inner", "outer"])
     gaussian_label = VertexLabel('gaussian', ["outer"])
 
     gamma = Gamma(1., 1., label=gamma_label)
@@ -130,7 +131,7 @@ def test_can_get_vertices_in_namespace() -> None:
 
     net = BayesNet([gamma, gaussian])
     vertices_in_outer = list(net.get_vertices_in_namespace(["outer"]))
-    vertices_in_inner = list(net.get_vertices_in_namespace(["outer", "inner"]))
+    vertices_in_inner = list(net.get_vertices_in_namespace(["inner", "outer"]))
 
     assert len(vertices_in_outer) == 2
     assert gamma in vertices_in_outer
@@ -141,11 +142,11 @@ def test_can_get_vertices_in_namespace() -> None:
 
 
 def test_get_vertices_in_namespace_returns_empty_if_not_found() -> None:
-    gamma_label = VertexLabel('gamma', ["outer", "inner"])
-    gaussian_label = VertexLabel('gaussian', ["outer"])
+    gamma_label = VertexLabel('gamma', ["inner", "outer"])
+    gaussian_label = VertexLabel('gaussian', ["inner"])
 
     gamma = Gamma(1., 1., label=gamma_label)
     gaussian = Gaussian(0., gamma, label=gaussian_label)
 
     net = BayesNet([gamma, gaussian])
-    assert list(net.get_vertices_in_namespace(["inner", "outer"])) == []
+    assert list(net.get_vertices_in_namespace(["outer", "inner"])) == []
