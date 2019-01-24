@@ -111,15 +111,15 @@ def test_can_get_vertex_by_label() -> None:
     gaussian = Gaussian(0., gamma, label=gaussian_label)
 
     net = BayesNet([gamma, gaussian])
-    assert net.get_vertex_by_label(gamma_label) == gamma
-    assert net.get_vertex_by_label('gamma') == gamma
-    assert net.get_vertex_by_label(gaussian_label) == gaussian
+    assert net.get_vertex_by_label(gamma_label) == gamma  # type: ignore
+    assert net.get_vertex_by_label('gamma') == gamma  # type: ignore
+    assert net.get_vertex_by_label(gaussian_label) == gaussian  # type: ignore
 
 
 def test_get_vertex_by_label_returns_none_if_not_found() -> None:
     net = BayesNet([Gaussian(0., 1., label="used label"), Gamma(1., 1.)])
-    assert net.get_vertex_by_label("unused label") == None
-    assert net.get_vertex_by_label(VertexLabel("used label", ["inner", "outer"])) == None
+    assert net.get_vertex_by_label("unused label") == None  # type: ignore
+    assert net.get_vertex_by_label(VertexLabel("used label", ["inner", "outer"])) == None  # type: ignore
 
 
 def test_can_get_vertices_in_namespace() -> None:
